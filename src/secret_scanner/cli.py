@@ -9,7 +9,7 @@ from .scanner import scan_path
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="secret-scanner",
-        description="Scan files for accidentally committed secrets.",
+        description="Scan files for accidentally committed secrets and, with --pii, personal data.",
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
 
@@ -17,6 +17,11 @@ def build_parser() -> argparse.ArgumentParser:
     scan.add_argument("path", help="file or directory to scan")
     scan.add_argument("--format", choices=["text", "json"], default="text")
     scan.add_argument("--out", help="optional report path")
+    scan.add_argument(
+        "--pii",
+        action="store_true",
+        help="also look for personal data: SSNs, payment card numbers, email addresses",
+    )
     scan.add_argument(
         "--no-fail",
         action="store_true",
@@ -29,7 +34,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
-    findings = scan_path(args.path)
+    findings = scan_path(args.path, include_pii=args.pii)
     report = findings_to_json(findings) if args.format == "json" else findings_to_text(findings)
 
     if args.out:
