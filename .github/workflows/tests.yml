@@ -5,9 +5,16 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python-version }}
       - run: PYTHONPATH=src python -m unittest discover -s tests
+      - name: Sample project still produces the documented findings
+        run: |
+          PYTHONPATH=src python -m secret_scanner scan examples/sample_project --no-fail --format json --out report.json
+          python -c "import json; assert json.load(open('report.json'))['total_findings'] == 2"
