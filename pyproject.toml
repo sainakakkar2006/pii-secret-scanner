@@ -3,9 +3,9 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "secret-scanner-cli"
-version = "0.1.0"
-description = "A small CLI that scans files for secret-like text."
+name = "pii-secret-scanner"
+version = "0.2.0"
+description = "CLI that finds committed secrets and, optionally, personal data, with masked output and CI exit codes."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Saina Kakkar" }]
@@ -13,6 +13,7 @@ dependencies = []
 
 [project.scripts]
 secret-scanner = "secret_scanner.cli:main"
+pii-secret-scanner = "secret_scanner.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
